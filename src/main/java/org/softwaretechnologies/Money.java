@@ -26,10 +26,23 @@ public class Money {
      */
     @Override
     public boolean equals(Object o) {
-        // TODO: реализуйте вышеуказанную функцию
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Money otherMoney = (Money) o;
+        if (type == null) {
+            if (otherMoney.type != null) return false;
+        } else {
+            if (!type.equals(otherMoney.type)) return false;
+        }
+        if (amount == null && otherMoney.amount == null) return true;
+        if (amount == null || otherMoney.amount == null) return false;
+        BigDecimal thisScaled = this.amount.setScale(4,RoundingMode.HALF_UP);
+        BigDecimal otherScaled = otherMoney.amount.setScale(4,RoundingMode.HALF_UP);
 
-        return false;
+        return thisScaled.equals(otherScaled);
     }
+
+
 
     /**
      * Формула:
@@ -48,12 +61,32 @@ public class Money {
      */
     @Override
     public int hashCode() {
-        // TODO: реализуйте вышеуказанную функцию
+        BigDecimal scaledAmount = amount != null ? amount.setScale(4, RoundingMode.HALF_UP) : null;
 
+        long amountPart;
+        if (scaledAmount == null) amountPart = 10000L;
+        else {
+            amountPart = (long)(scaledAmount.doubleValue()*10000.0);
+        }
 
-        Random random = new Random();
-        return random.nextInt();
+        int currencyCod;
+        if (type == null) {
+            currencyCod = 5;
+        }
+        else{
+            switch (type) {
+                case USD: currencyCod = 1; break;
+                case EURO: currencyCod = 2; break;
+                case RUB: currencyCod = 3; break;
+                case KRONA: currencyCod = 4; break;
+                default: currencyCod = 5; break;
+            }
+        }
+        long hash = amountPart + currencyCod;
+        if (hash >= (MAX_VALUE)-5) return MAX_VALUE;
+        return (int) hash;
     }
+
 
     /**
      * Верните строку в формате
@@ -74,9 +107,10 @@ public class Money {
      */
     @Override
     public String toString() {
-        // TODO: реализуйте вышеуказанную функцию
+        String typeStr = (type == null) ? "null" : type.toString();
+        String amountStr = (amount == null) ? "null" : (amount.setScale(4, RoundingMode.HALF_UP).toString());
         String str = type.toString()+": "+amount.setScale(4, RoundingMode.HALF_UP).toString();
-        return str;
+        return typeStr + ": " + amountStr;
     }
 
     public BigDecimal getAmount() {
