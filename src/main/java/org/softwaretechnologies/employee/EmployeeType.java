@@ -28,4 +28,6 @@ public enum EmployeeType {
 
     };
 
+    public Employee createEmployee(String name, int baseSalary) {
+    }
 }
