@@ -32,13 +32,13 @@ public class Company {
      * @return сумма зарплат всех сотрудников за указанный месяц
      */
     public int getMonthSalary(int month) {
-        int totalSalary = 0;
-        for (Employee employee : employeeList) {
-            totalSalary += employee.getMonthSalary(month);
-        }
-        return totalSalary;
-    }
+        int sum = 0;
 
+        for (Employee employee : employeeList) {
+            sum += employee.getMonthSalary(month);
+        }
+        return sum;
+    }
     public String getName() {
         return name;
     }

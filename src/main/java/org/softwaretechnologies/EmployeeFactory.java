@@ -16,6 +16,6 @@ public class EmployeeFactory {
 
 
     public static Employee createEmployee(String name, int baseSalary, EmployeeType type) {
-        return type.createEmployee(name, baseSalary);
+        return type == null ? null : type.createEmployee(name, baseSalary);
     }
 }
