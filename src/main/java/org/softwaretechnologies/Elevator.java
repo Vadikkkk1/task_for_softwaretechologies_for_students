@@ -71,23 +71,23 @@ public final class Elevator {
      * @param floor этаж, на который должен переместиться лифт
      */
     public void goToExactFloor(int floor) {
-       if (floor == currentFloor) {
-           System.out.println("вы достигли указанного этажа" + floor);
-       }
-       else {
-           boolean movingUp = floor > currentFloor;
+        if (floor < lowestFloor || floor > highestFloor) {
+            System.out.println("Указан неверный этаж");
+            return;
+        }
 
-           while (currentFloor != floor) {
-               System.out.println("текущий этаж" + currentFloor);
-               if (movingUp) {
-                   goUp();
-               } else {
-                   goDown();
-               }
-           }
-           System.out.println("вы достигли указанного этажа" + floor);
-       }
+        while (currentFloor != floor) {
+            System.out.println("Текущий этаж: " + currentFloor);
+
+            if (currentFloor < floor) {
+                goUp();
+            } else {
+                goDown();
+            }
+        }
+        System.out.println("Вы достигли указанного этажа: " + floor);
     }
+
 
     /**
      * Этаж, на котором сейчас находится лифт.
