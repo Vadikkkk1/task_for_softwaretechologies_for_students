@@ -27,19 +27,21 @@ public class Money {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Money otherMoney = (Money) o;
-        if (type == null) {
-            if (otherMoney.type != null) return false;
-        } else {
-            if (!type.equals(otherMoney.type)) return false;
-        }
-        if (amount == null && otherMoney.amount == null) return true;
-        if (amount == null || otherMoney.amount == null) return false;
-        BigDecimal thisScaled = this.amount.setScale(4,RoundingMode.HALF_UP);
-        BigDecimal otherScaled = otherMoney.amount.setScale(4,RoundingMode.HALF_UP);
 
-        return thisScaled.equals(otherScaled);
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Money money = (Money) o;
+
+        if (type != money.type) return false;
+
+        if (amount == null && money.amount == null) return true;
+
+        if (amount == null || money.amount == null) return false;
+
+        BigDecimal firstAmount = amount.setScale(4, RoundingMode.HALF_UP);
+        BigDecimal secondAmount = money.amount.setScale(4, RoundingMode.HALF_UP);
+
+        return firstAmount.compareTo(secondAmount) == 0;
     }
 
 
@@ -61,30 +63,32 @@ public class Money {
      */
     @Override
     public int hashCode() {
-        BigDecimal scaledAmount = amount != null ? amount.setScale(4, RoundingMode.HALF_UP) : null;
 
-        long amountPart;
-        if (scaledAmount == null) amountPart = 10000L;
-        else {
-            amountPart = (long)(scaledAmount.doubleValue()*10000.0);
+        int typeNumber;
+
+
+        if (type == MoneyType.USD) {
+            typeNumber = 1;
+        } else if (type == MoneyType.EURO) {
+            typeNumber = 2;
+        } else if (type == MoneyType.RUB) {
+            typeNumber = 3;
+        } else if (type == MoneyType.KRONA) {
+            typeNumber = 4;
+        } else {
+            typeNumber = 5;
         }
 
-        int currencyCod;
-        if (type == null) {
-            currencyCod = 5;
+        if (amount == null) {
+            return 10000 + typeNumber;
         }
-        else{
-            switch (type) {
-                case USD: currencyCod = 1; break;
-                case EURO: currencyCod = 2; break;
-                case RUB: currencyCod = 3; break;
-                case KRONA: currencyCod = 4; break;
-                default: currencyCod = 5; break;
-            }
+        BigDecimal roundedAmount = amount.setScale(4, RoundingMode.HALF_UP);
+        BigDecimal hashAMount = roundedAmount.multiply(BigDecimal.valueOf(10000));
+
+        if (hashAMount.compareTo(BigDecimal.valueOf(MAX_VALUE - 5L)) >= 0) {
+            return MAX_VALUE;
         }
-        long hash = amountPart + currencyCod;
-        if (hash >= (MAX_VALUE)-5) return MAX_VALUE;
-        return (int) hash;
+        return hashAMount.intValue() + typeNumber;
     }
 
 
@@ -107,10 +111,26 @@ public class Money {
      */
     @Override
     public String toString() {
-        String typeStr = (type == null) ? "null" : type.toString();
-        String amountStr = (amount == null) ? "null" : (amount.setScale(4, RoundingMode.HALF_UP).toString());
-        String str = type.toString()+": "+amount.setScale(4, RoundingMode.HALF_UP).toString();
-        return typeStr + ": " + amountStr;
+        String typeString;
+
+
+        // валюта
+        if (type == null) {
+            typeString = "null";
+        } else {
+            typeString = type.toString();
+        }
+
+        String amountString;
+
+        if (amount == null) {
+            amountString = "null";
+        } else {
+            amountString = amount.setScale(4, RoundingMode.HALF_UP).toString();
+        }
+        String str = typeString + ": " + amountString;
+        return str;
+
     }
 
     public BigDecimal getAmount() {
