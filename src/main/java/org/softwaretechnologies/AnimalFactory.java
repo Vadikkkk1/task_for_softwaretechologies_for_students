@@ -14,6 +14,6 @@ public class AnimalFactory {
 
 
     public static Animal createAnimal(String name, AnimalType type) {
-        return type.createAnimal(name);
+        return type == null ? null : type.createAnimal(name);
     }
 }

@@ -36,9 +36,9 @@ public class Zoo {
         List<String> sounds = new ArrayList<>();
 
         List<Animal> sortedAnimals = new ArrayList<>(animalList);
+
         sortedAnimals.sort(Comparator.comparing(Animal::getName));
 
-        // Собираем звуки отсортированных животных
         for (Animal animal : sortedAnimals) {
             sounds.add(animal.sound());
         }
